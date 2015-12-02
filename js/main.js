@@ -3,7 +3,7 @@ var myApp = angular.module('myApp', ['ui.router', 'firebase']);
 
 //App Factory
 myApp.factory("Auth", function ($firebaseAuth) {
-	var ref = new Firebase('');
+	var ref = new Firebase('https://moviehub.firebaseio.com/');
 	return $firebaseAuth(ref);
 });
 
@@ -12,7 +12,7 @@ myApp.config(function ($stateProvider) {
 	$stateProvider
 		.state('index', {
 			url: '',
-			templateUrl: 'templates/index.html',
+			templateUrl: 'templates/home.html',
 			controller: 'HomeController'
 		})
 		
@@ -44,11 +44,13 @@ myApp.config(function ($stateProvider) {
 myApp.controller('HomeController', function($scope, $http, Auth, $firebaseArray, $firebaseObject) {
 	/***REFERENCES AND AUTH***/
 
-	var ref = new Firebase('https://.firebaseio.com/');
+	var ref = new Firebase('https://moviehub.firebaseio.com/');
 
 	var usersRef = ref.child("users");
 
 	var favoritesRef = ref.child("favorites");
+
+	var apiKey = 'bdf36392df2c9629ed9d91bfac412943:0:73633609'
 
     $scope.users = $firebaseObject(usersRef);
 
@@ -132,7 +134,7 @@ myApp.controller('HomeController', function($scope, $http, Auth, $firebaseArray,
 	//Search For Reviews By Movie
 	
 	var moviesUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/search.json?query=';
-	var moviesUrlLast = '&critics-pick=Y&api-key='; //ADD API KEY
+	var moviesUrlLast = '&critics-pick=Y&api-key=' + apiKey; //ADD API KEY
 	
 	$scope.searchMovies = function() {
 		var search = ($scope.searchKeywords).split(' ');
@@ -148,14 +150,15 @@ myApp.controller('HomeController', function($scope, $http, Auth, $firebaseArray,
 		var moviesUrlComplete = moviesUrlFirst + stringBuilder + moviesUrlLast;
 		
 		$http.get(moviesUrlComplete).success(function(response){
-			$scope.moviesSearchResults = response.results
+			$scope.searchResults = response.results
 		})
 	}
 	
+	/*
 	//Search For Reviews By Reviewers
 	
 	var reviewersUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/reviewer/';
-	var reviewersUrlLast = '.json?api-key=sample-key';
+	var reviewersUrlLast = '.json?api-key=' + apiKey;
 	
 	$scope.searchReviewers = function() {
 		var search = ($scope.searchKeywords).split(' ');
@@ -165,15 +168,15 @@ myApp.controller('HomeController', function($scope, $http, Auth, $firebaseArray,
 		var s;		
 		for(s in search) {
 			stringBuilder += search[s];
-			stringBuilder += "+";
+			stringBuilder += "-";
 		}	
 		
-		var reviewersUrlComplete = moviesUrlFirst + stringBuilder + moviesUrlLast;
+		var reviewersUrlComplete = reviewersUrlFirst + stringBuilder + reviewersUrlLast;
 		
 		$http.get(reviewersUrlComplete).success(function(response){
-			$scope.reviewersSearchResults = response.results
+			$scope.searchResults = response.results
 		})
 	}
-	
+	*/
 	
 });

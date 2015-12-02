@@ -12,17 +12,36 @@
 		
 		<form id="searchForm" name="searchForm">
 			<div class="form-group">
-				<label form="searchInput">Search Movie Hub</label>
+				<label form="searchInput">Search for reviews, by movie or critic</label>
 				<input id="searchInput" name="searchInput" ng-model="searchKeywords" class="form-control" placeholder="Search for a movie or a critic" />
 			</div>
-			<button id="searchButton" ng-disabled="searchForm.searchInput.$invalid" ng-click="searchMovies()">Search</button>
+			<button id="moviesSearchButton" ng-disabled="searchForm.searchInput.$invalid" ng-click="searchMovies()">Search</button>
+			<!--<button id="reviewersSearchButton" ng-disabled="searchForm.searchInput.$invalid" ng-click="searchReviewers()">Search By Critic</button>-->
 		</form>
 	</section>
 	
 	<!--Search Results Section-->
-	<section id="searchResultsSection" class="jumbotron container">
+	<section ng-show="searchResults" id="searchResultsSection" class="jumbotron container">
 		<h2>Results</h2>
 		
+		<table id="searchResultsTable" class="table">
+			<thead>
+				<tr>
+					<th>Headline</th>
+					<th>Title</th>
+					<th>Critic</th>
+					<th>Headline</th>
+				</tr>
+			</thead>
+			<tbody ng-repeat="result in searchResults">
+				<tr id="{{result.nyt_movie_id}}">
+					<td></td>
+					<td>{{result.display_title}}</td>
+					<td>{{result.byline}}</td>
+					<td>"{{result.headline}}"</td>
+				</tr>
+			</tbody>
+		</table>
 		
 	</section>
 	
