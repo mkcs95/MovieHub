@@ -41,7 +41,7 @@ myApp.config(function ($stateProvider) {
 		})
 });
 
-myApp.controller('HomeController', function($scope, Auth, $firebaseArray, $firebaseObject) {
+myApp.controller('HomeController', function($scope, $http, Auth, $firebaseArray, $firebaseObject) {
 	/***REFERENCES AND AUTH***/
 
 	var ref = new Firebase('https://.firebaseio.com/');
@@ -126,4 +126,54 @@ myApp.controller('HomeController', function($scope, Auth, $firebaseArray, $fireb
 		$scope.authData = null
 		$scope.user = null
 	}
+	
+	/***SEARCH***/	
+	
+	//Search For Reviews By Movie
+	
+	var moviesUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/search.json?query=';
+	var moviesUrlLast = '&critics-pick=Y&api-key='; //ADD API KEY
+	
+	$scope.searchMovies = function() {
+		var search = ($scope.searchKeywords).split(' ');
+		
+		var stringBuilder = "";
+		
+		var s;		
+		for(s in search) {
+			stringBuilder += search[s];
+			stringBuilder += "+";
+		}	
+		
+		var moviesUrlComplete = moviesUrlFirst + stringBuilder + moviesUrlLast;
+		
+		$http.get(moviesUrlComplete).success(function(response){
+			$scope.moviesSearchResults = response.results
+		})
+	}
+	
+	//Search For Reviews By Reviewers
+	
+	var reviewersUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/reviewer/';
+	var reviewersUrlLast = '.json?api-key=sample-key';
+	
+	$scope.searchReviewers = function() {
+		var search = ($scope.searchKeywords).split(' ');
+		
+		var stringBuilder = "";
+		
+		var s;		
+		for(s in search) {
+			stringBuilder += search[s];
+			stringBuilder += "+";
+		}	
+		
+		var reviewersUrlComplete = moviesUrlFirst + stringBuilder + moviesUrlLast;
+		
+		$http.get(reviewersUrlComplete).success(function(response){
+			$scope.reviewersSearchResults = response.results
+		})
+	}
+	
+	
 });
