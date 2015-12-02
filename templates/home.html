@@ -3,7 +3,7 @@
 	
 	<!--Welcome Section-->
 	<section id="welcomeSection" class="jumbotron container">
-		<h1>Movie Hub</h1>
+		<!--<h1>MovieHub</h1>-->
 	</section>
 	
 	<!--Search Section-->
@@ -13,9 +13,13 @@
 		<form id="searchForm" name="searchForm">
 			<div class="form-group">
 				<label form="searchInput">Search for reviews, by movie or critic</label>
-				<input id="searchInput" name="searchInput" ng-model="searchKeywords" class="form-control" placeholder="Search for a movie or a critic" />
+				<div class="row">
+					<div class="col-xs-12 col-md-8 col-md-offset-2">
+						<input id="searchInput" name="searchInput" ng-model="searchKeywords" class="form-control" placeholder="Search for a movie or a critic" />
+					</div>
+				</div>	
 			</div>
-			<button id="moviesSearchButton" ng-disabled="searchForm.searchInput.$invalid" ng-click="searchMovies()">Search</button>
+			<button class="btn btn-default" id="moviesSearchButton" ng-disabled="searchForm.searchInput.$invalid" ng-click="searchMovies()">Search</button>
 			<!--<button id="reviewersSearchButton" ng-disabled="searchForm.searchInput.$invalid" ng-click="searchReviewers()">Search By Critic</button>-->
 		</form>
 	</section>
@@ -27,7 +31,7 @@
 		<table id="searchResultsTable" class="table">
 			<thead>
 				<tr>
-					<th>Headline</th>
+					<th>Thumbnail</th>
 					<th>Title</th>
 					<th>Critic</th>
 					<th>Headline</th>
@@ -51,27 +55,27 @@
 		
 		<div class="row">
 			<div class="col-xs-12 col-md-4">
-				<h3></h3>
-				<i></i>
-				<p></p>
+				<i class="fa fa-search"></i>
+				<h3>Search</h3>
+				<p>Search for critical reviews of your favorite movies</p>
 			</div>
 			<div class="col-xs-12 col-md-4">
-				<h3></h3>
-				<i></i>
-				<p></p>
+				<i class="fa fa-film"></i>
+				<h3>Reviews</h3>
+				<p>View top movie reviews from the New York Times</p>
 			</div>
 			<div class="col-xs-12 col-md-4">
-				<h3></h3>
-				<i></i>
-				<p></p>
-			</div>
+				<i class="fa fa-star"></i>
+				<h3>Favorites</h3>
+				<p>Favorite reviews of movies</p>
+			</div>			
 		</div>
 	</section>
 	
 	<!--Start Section-->
-	<section id="startSection" class="jumbotron container">
+	<section ng-show="!authData" id="startSection" class="jumbotron container">
 		<h2>Get Started</h2>
 		<h3>sign up today!</h3>
-		<button></button>
+		<button class="btn btn-primary" data-toggle="modal" data-target="#signupModal">Sign Up</button>
 	</section>
 </div>

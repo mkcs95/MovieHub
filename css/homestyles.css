@@ -1,0 +1,74 @@
+#welcomeSection {
+	color: #FFFFFF;
+	background-color: rgba(0,0,0,.1) !important;
+	padding-top: 20%;
+	padding-bottom: 15%;
+}
+
+#searchSection {
+	background-color: rgb(255, 102, 102);
+	color: #FFFFFF;
+}
+
+#searchSection h2 {
+	margin-bottom: 1em;
+}
+
+#searchInput {
+	margin-top: 1em;
+	margin-bottom: 1em;	
+}
+
+#moviesSearchButton {
+	background-color: transparent;
+	color: #FFFFFF !important;
+	border-style: solid;
+	border-color: #FFFFFF;
+	border-width: .1em;
+	margin-bottom: 1em;
+}
+
+#moviesSearchButton:hover {
+	border-color: #FFFFFF;
+	background-color: #FFFFFF;
+	color: rgb(255, 102, 102) !important;
+}
+
+#searchResultsSection {
+	background-color: #FCFCFC;
+    color: #22365C;
+}
+
+#searchResultsTable {
+	text-align: left;
+}
+
+#aboutSection {
+	
+}
+
+#startSection {
+	background-color: #FCFCFC;
+	color: #22365C;
+}
+
+#startSection > button {
+	background-color: transparent;
+	color: #22365C !important;
+	border-style: solid;
+	border-color: #22365C;
+	border-width: .1em;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+#startSection > button:hover {
+	border-color: rgba(34, 54, 92, 1);
+	background-color: rgba(34, 54, 92, 1);
+	color: #FCFCFC !important;
+}
+
+.fa-star, .fa-search, .fa-film {
+	font-size: 3.5em;
+	margin-bottom: .5em;
+}
