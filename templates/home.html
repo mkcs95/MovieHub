@@ -1,4 +1,58 @@
 <!--Template Wrapper-->
 <div id="homeTemplateWrapper">
 	
+	<!--Welcome Section-->
+	<section id="welcomeSection" class="jumbotron container">
+		<h1>Movie Hub</h1>
+	</section>
+	
+	<!--Search Section-->
+	<section id="searchSection" class="jumbotron container">
+		<h2>Search</h2>
+		
+		<form id="searchForm" name="searchForm">
+			<div class="form-group">
+				<label form="searchInput">Search Movie Hub</label>
+				<input id="searchInput" name="searchInput" ng-model="review" class="form-control" placeholder="Search for a movie or a critic" />
+			</div>
+			<button id="searchButton" ng-disabled="searchForm.searchInput.$invalid" ng-click="search">Search</button>
+		</form>
+	</section>
+	
+	<!--Search Results Section-->
+	<section id="searchResultsSection" class="jumbotron container">
+		<h2>Results</h2>
+		
+		
+	</section>
+	
+	<!--About Section-->
+	<section id="aboutSection" class="jumbotron container">
+		<h2>About</h2>
+		
+		<div class="row">
+			<div class="col-xs-12 col-md-4">
+				<h3></h3>
+				<i></i>
+				<p></p>
+			</div>
+			<div class="col-xs-12 col-md-4">
+				<h3></h3>
+				<i></i>
+				<p></p>
+			</div>
+			<div class="col-xs-12 col-md-4">
+				<h3></h3>
+				<i></i>
+				<p></p>
+			</div>
+		</div>
+	</section>
+	
+	<!--Start Section-->
+	<section id="startSection" class="jumbotron container">
+		<h2>Get Started</h2>
+		<h3>sign up today!</h3>
+		<button></button>
+	</section>
 </div>
