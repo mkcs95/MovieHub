@@ -15,40 +15,40 @@ myApp.config(function ($stateProvider) {
 			templateUrl: 'templates/home.html',
 			controller: 'HomeController'
 		})
-		
+
 		.state('critic', {
 			url: '/critic',
 			templateUrl: 'templates/critic.html',
 			controller: 'HomeController'
 		})
-		
+
 		.state('favorites', {
 			url: '/favorites',
 			templateUrl: 'templates/favorites.html',
 			controller: 'HomeController'
 		})
-		
+
 		.state('explore', {
 			url: '/explore',
 			templateUrl: 'templates/explore.html',
 			controller: 'HomeController'
 		})
-		
+
 		.state('movie', {
 			url: '/movie',
 			templateUrl: 'templates/movie.html',
-			controller: 'HomeController'
+			controller: 'HomeController',
 		})
 });
 
-myApp.controller('HomeController', function($scope, $http, Auth, $firebaseArray, $firebaseObject) {
+myApp.controller('HomeController', function ($scope, $http, $state, Auth, $firebaseArray, $firebaseObject) {
 	/***REFERENCES AND AUTH***/
 
 	var ref = new Firebase('https://moviehub.firebaseio.com/');
 
 	var usersRef = ref.child("users");
 
-	var favoritesRef = ref.child("favorites");
+	var moviesRef = ref.child("movies");
 
 	var apiKey = 'bdf36392df2c9629ed9d91bfac412943:0:73633609'
 
@@ -105,7 +105,6 @@ myApp.controller('HomeController', function($scope, $http, Auth, $firebaseArray,
 	$scope.signIn = function () {
 		$scope.logIn().then(function (authData) {
 			$scope.authData = authData;
-
 		})
 
 			.then(function () {
@@ -134,49 +133,86 @@ myApp.controller('HomeController', function($scope, $http, Auth, $firebaseArray,
 	//Search For Reviews By Movie
 	
 	var moviesUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/search.json?query=';
-	var moviesUrlLast = '&critics-pick=Y&api-key=' + apiKey; //ADD API KEY
-	
-	$scope.searchMovies = function() {
+	var moviesUrlLast = '&critics-pick=Y&api-key=' + apiKey;
+
+	$scope.searchMovies = function () {
 		var search = ($scope.searchKeywords).split(' ');
-		
+
 		var stringBuilder = "";
-		
-		var s;		
-		for(s in search) {
+
+		var s;
+		for (s in search) {
 			stringBuilder += search[s];
 			stringBuilder += "+";
-		}	
-		
+		}
+
 		var moviesUrlComplete = moviesUrlFirst + stringBuilder + moviesUrlLast;
-		
-		$http.get(moviesUrlComplete).success(function(response){
+
+		$http.get(moviesUrlComplete).success(function (response) {
 			$scope.searchResults = response.results
 		})
 	}
+
+	/***MOVIE / REVIEWER SELECTION***/
 	
-	/*
-	//Search For Reviews By Reviewers
-	
-	var reviewersUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/reviewer/';
-	var reviewersUrlLast = '.json?api-key=' + apiKey;
-	
-	$scope.searchReviewers = function() {
-		var search = ($scope.searchKeywords).split(' ');
+	//Select A Movie
+	$scope.selectMovie = function (movieName, movieReviewer, movieID) {
+		$scope.currentMovieName = movieName;
+		$scope.currentMovieReviewer = movieReviewer;
+		$scope.currentMovieID = movieID;
 		
+		//Check if new movie
+		
+		
+		//If new movie, make new movie object
+		
+		
+		//Set scope movie info
+		
+
+		$state.go('movie');
+	}
+	
+	//Select A Reviewer
+	$scope.selectReviewer = function (reviewer) {
+		$scope.currentReviewer = reviewer;
+
+		var reviewersUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/reviewer/';
+		var reviewersUrlLast = '.json?api-key=' + apiKey;
+		var search;
+			
+		//Get Reviewer Movies
+		if (($scope.currentReviewer).indexOf('. ') > -1) {
+			search = ($scope.searchKeywords).split('. ');
+		}
+		else {
+			search = ($scope.searchKeywords).split(' ');
+		}
+
 		var stringBuilder = "";
-		
-		var s;		
-		for(s in search) {
+
+		var s;
+		for (s in search) {
 			stringBuilder += search[s];
 			stringBuilder += "-";
-		}	
-		
+		}
+
 		var reviewersUrlComplete = reviewersUrlFirst + stringBuilder + reviewersUrlLast;
-		
-		$http.get(reviewersUrlComplete).success(function(response){
-			$scope.searchResults = response.results
+
+		//Set scope reviewer movies 
+		$http.get(reviewersUrlComplete).success(function (response) {
+			$scope.reviewerMovies = response.results
 		})
+		
+		//Get Reviewer Details
+				
+
+		$state.go('critic');
 	}
-	*/
 	
+	/***ADD A FAVORITE***/
+	
+	$scope.addFavorite = function() {
+		
+	}
 });
