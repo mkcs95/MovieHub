@@ -1,5 +1,5 @@
 <!--Template Wrapper-->
-<div id="homeTemplateWrapper">
+<div ng-controller="HomeController" id="homeTemplateWrapper">
 	
 	<!--Welcome Section-->
 	<section id="welcomeSection" class="jumbotron container">
@@ -38,10 +38,10 @@
 				</tr>
 			</thead>
 			<tbody ng-repeat="result in searchResults">
-				<tr id="{{result.nyt_movie_id}}">
+				<tr>
 					<td></td>
 					<td>{{result.display_title}}</td>
-					<td>{{result.byline}}</td>
+					<td><a ng-click="selectReviewer(result.byline)">{{result.byline}}</a></td>
 					<td>"{{result.headline}}"</td>
 				</tr>
 			</tbody>

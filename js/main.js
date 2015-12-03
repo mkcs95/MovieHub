@@ -11,7 +11,7 @@ myApp.factory("Auth", function ($firebaseAuth) {
 myApp.config(function ($stateProvider) {
 	$stateProvider
 		.state('index', {
-			url: '',
+			url: '/',
 			templateUrl: 'templates/home.html',
 			controller: 'HomeController'
 		})
@@ -19,7 +19,8 @@ myApp.config(function ($stateProvider) {
 		.state('critic', {
 			url: '/critic',
 			templateUrl: 'templates/critic.html',
-			controller: 'HomeController'
+			controller: 'HomeController',
+			params: {myParam: null}
 		})
 
 		.state('favorites', {
@@ -41,7 +42,7 @@ myApp.config(function ($stateProvider) {
 		})
 });
 
-myApp.controller('HomeController', function ($scope, $http, $state, Auth, $firebaseArray, $firebaseObject) {
+myApp.controller('HomeController', function ($scope, $stateParams, $http, $state, Auth, $firebaseArray, $firebaseObject) {
 	/***REFERENCES AND AUTH***/
 
 	var ref = new Firebase('https://moviehub.firebaseio.com/');
@@ -176,9 +177,11 @@ myApp.controller('HomeController', function ($scope, $http, $state, Auth, $fireb
 	//Select A Reviewer
 	$scope.selectReviewer = function (reviewer) {
 		$scope.currentReviewer = reviewer;
+		
+		console.log($scope.currentReviewer);
 
 		var reviewersUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/reviewer/';
-		var reviewersUrlLast = '.json?api-key=' + apiKey;
+		var reviewersUrlLast = '.json?critics-pick=Y&api-key=' + apiKey;
 		var search;
 			
 		//Get Reviewer Movies
@@ -201,13 +204,23 @@ myApp.controller('HomeController', function ($scope, $http, $state, Auth, $fireb
 
 		//Set scope reviewer movies 
 		$http.get(reviewersUrlComplete).success(function (response) {
-			$scope.reviewerMovies = response.results
+			$scope.currentReviewerMovies = response.results;
+			
+			console.log("Got Reviewer Movies");
 		})
 		
 		//Get Reviewer Details
 				
+		var reviewerUrlFirst = 'http://api.nytimes.com/svc/movies/v2/critics/';
+		var reviewerUrlLast = '.json?api-key=' + apiKey;
+		var reviwerUrlComplete = reviewerUrlFirst + stringBuilder + reviewerUrlLast;
+		
+		//Set scope reviewer details
+		$http.get(reviwerUrlComplete).success(function(response) {
+			$scope.currentReviewerDetails = response.results[0]
+		})
 
-		$state.go('critic');
+		$state.go('critic', params:{'currentReviewer': $scope.currentReviewer});
 	}
 	
 	/***ADD A FAVORITE***/
