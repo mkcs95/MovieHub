@@ -1,3 +1,5 @@
+var apiKey = 'bdf36392df2c9629ed9d91bfac412943:0:73633609';
+
 // Create app
 var myApp = angular.module('myApp', ['ui.router', 'firebase']);
 
@@ -19,8 +21,7 @@ myApp.config(function ($stateProvider) {
 		.state('critic', {
 			url: '/critic',
 			templateUrl: 'templates/critic.html',
-			controller: 'HomeController',
-			params: {myParam: null}
+			controller: 'CriticController'
 		})
 
 		.state('favorites', {
@@ -42,7 +43,49 @@ myApp.config(function ($stateProvider) {
 		})
 });
 
-myApp.controller('HomeController', function ($scope, $stateParams, $http, $state, Auth, $firebaseArray, $firebaseObject) {
+myApp.factory('hubService', function () {
+	var currentReviewer;
+	var currentMovie;
+	var currentMovieReviewer;
+	var currentMovieID;
+
+	var setCurrentMovie = function (movie, reviewer, id) {
+		currentMovie = movie;
+		currentMovieReviewer = reviewer;
+		currentMovieID = id;
+	};
+
+	var getCurrentMovie = function () {
+		return currentMovie;
+	};
+
+	var getCurrentMovieReviewer = function () {
+		return currentMovieReviewer;
+	};
+
+	var getCurrentMovieID = function () {
+		return currentMovieID;
+	};
+
+	var setCurrentReviewer = function (reviewer) {
+		currentReviewer = reviewer;
+	};
+
+	var getCurrentReviewer = function () {
+		return currentReviewer;
+	};
+
+	return {
+		setCurrentMovie: setCurrentMovie,
+		setCurrentReviewer: setCurrentReviewer,
+		getCurrentMovie: getCurrentMovie,
+		getCurrentMovieReviewer: getCurrentMovieReviewer,
+		getCurrentMovieID: getCurrentMovieID,
+		getCurrentReviewer: getCurrentReviewer
+	};
+});
+
+myApp.controller('HomeController', function ($scope, $stateParams, $http, $state, Auth, $firebaseArray, $firebaseObject, hubService) {
 	/***REFERENCES AND AUTH***/
 
 	var ref = new Firebase('https://moviehub.firebaseio.com/');
@@ -50,8 +93,6 @@ myApp.controller('HomeController', function ($scope, $stateParams, $http, $state
 	var usersRef = ref.child("users");
 
 	var moviesRef = ref.child("movies");
-
-	var apiKey = 'bdf36392df2c9629ed9d91bfac412943:0:73633609'
 
     $scope.users = $firebaseObject(usersRef);
 
@@ -176,6 +217,10 @@ myApp.controller('HomeController', function ($scope, $stateParams, $http, $state
 	
 	//Select A Reviewer
 	$scope.selectReviewer = function (reviewer) {
+		hubService.setCurrentReviewer(reviewer);
+		
+		/*
+		
 		$scope.currentReviewer = reviewer;
 		
 		console.log($scope.currentReviewer);
@@ -220,12 +265,56 @@ myApp.controller('HomeController', function ($scope, $stateParams, $http, $state
 			$scope.currentReviewerDetails = response.results[0]
 		})
 
-		$state.go('critic', params:{'currentReviewer': $scope.currentReviewer});
+		*/
+
+		$state.go('critic');
 	}
 	
 	/***ADD A FAVORITE***/
-	
-	$scope.addFavorite = function() {
-		
+
+	$scope.addFavorite = function () {
+
 	}
+});
+
+myApp.controller('CriticController', function ($scope, $stateParams, $http, $state, Auth, $firebaseArray, $firebaseObject, hubService) {
+	$scope.currentReviewer = hubService.getCurrentReviewer();
+
+	var reviewersUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/reviewer/';
+	var reviewersUrlLast = '.json?critics-pick=Y&api-key=' + apiKey;
+	var search;
+			
+	//Get Reviewer Movies
+	if (($scope.currentReviewer).indexOf('. ') > -1) {
+		search = ($scope.currentReviewer).split('. ');
+	}
+	else {
+		search = ($scope.currentReviewer).split(' ');
+	}
+
+	var stringBuilder = "";
+
+	var s;
+	for (s in search) {
+		stringBuilder += search[s];
+		stringBuilder += "-";
+	}
+
+	var reviewersUrlComplete = reviewersUrlFirst + stringBuilder + reviewersUrlLast;
+
+	//Set scope reviewer movies 
+	$http.get(reviewersUrlComplete).success(function (response) {
+		$scope.currentReviewerMovies = response.results;
+	})
+		
+	//Get Reviewer Details
+				
+	var reviewerUrlFirst = 'http://api.nytimes.com/svc/movies/v2/critics/';
+	var reviewerUrlLast = '.json?api-key=' + apiKey;
+	var reviwerUrlComplete = reviewerUrlFirst + stringBuilder + reviewerUrlLast;
+		
+	//Set scope reviewer details
+	$http.get(reviwerUrlComplete).success(function (response) {
+		$scope.currentReviewerDetails = response.results[0]
+	})
 });
