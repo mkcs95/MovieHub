@@ -1,5 +1,5 @@
 <!--Template Wrapper-->
-<div id="criticTemplateWrapper">
+<div ng-controller="CriticController" id="criticTemplateWrapper">
 
 	<!--Critic Header Section-->
 	<section id="criticHeaderSection" class="jumbotron container">
@@ -17,9 +17,9 @@
 			</div>
 			<div class="col-xs-12 col-md-4">
 				<h2>Movies Reviewed</h2>
-				<div>
+				<div ng-repeat="review in currentReviewerMovies">
 					<div class="row">
-						<h3>Title</h3>
+						<h3>"{{review.headline}}"</h3>
 					</div>
 				</div>
 			</div>

@@ -294,12 +294,14 @@ myApp.controller('CriticController', function ($scope, $stateParams, $http, $sta
 
 	var stringBuilder = "";
 
-	var s;
-	for (s in search) {
-		stringBuilder += search[s];
+	var i;
+	for (i = 0; i < search.length - 1; i++) {
+		stringBuilder += search[i];
 		stringBuilder += "-";
 	}
-
+	
+	stringBuilder += search[search.length - 1];
+	
 	var reviewersUrlComplete = reviewersUrlFirst + stringBuilder + reviewersUrlLast;
 
 	//Set scope reviewer movies 
