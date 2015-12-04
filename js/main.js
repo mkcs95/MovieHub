@@ -3,7 +3,7 @@ var apiKey = 'bdf36392df2c9629ed9d91bfac412943:0:73633609';
 // Create app
 var myApp = angular.module('myApp', ['ui.router', 'firebase']);
 
-//App Factory
+//App Authentication Factory
 myApp.factory("Auth", function ($firebaseAuth) {
 	var ref = new Firebase('https://moviehub.firebaseio.com/');
 	return $firebaseAuth(ref);
@@ -27,7 +27,7 @@ myApp.config(function ($stateProvider) {
 		.state('favorites', {
 			url: '/favorites',
 			templateUrl: 'templates/favorites.html',
-			controller: 'HomeController'
+			controller: 'FavoritesController'
 		})
 
 		.state('explore', {
@@ -39,10 +39,11 @@ myApp.config(function ($stateProvider) {
 		.state('movie', {
 			url: '/movie',
 			templateUrl: 'templates/movie.html',
-			controller: 'HomeController',
+			controller: 'MovieController',
 		})
 });
 
+//App Functionality Factory
 myApp.factory('hubService', function () {
 	var currentReviewer;
 	var currentMovie;
@@ -85,8 +86,9 @@ myApp.factory('hubService', function () {
 	};
 });
 
+//HOME CONTROLLER
 myApp.controller('HomeController', function ($scope, $stateParams, $http, $state, Auth, $firebaseArray, $firebaseObject, hubService) {
-	/***REFERENCES AND AUTH***/
+	//References
 
 	var ref = new Firebase('https://moviehub.firebaseio.com/');
 
@@ -95,6 +97,8 @@ myApp.controller('HomeController', function ($scope, $stateParams, $http, $state
 	var moviesRef = ref.child("movies");
 
     $scope.users = $firebaseObject(usersRef);
+
+	//Authentication
 
 	$scope.authObj = Auth;
 
@@ -124,7 +128,6 @@ myApp.controller('HomeController', function ($scope, $stateParams, $http, $state
 			.then(function (authData) {
 				$scope.authData = authData;
 
-				//CHANGE
 				$scope.users[authData.uid] = {
 					firstName: $scope.firstName,
 					lastName: $scope.lastName,
@@ -169,9 +172,7 @@ myApp.controller('HomeController', function ($scope, $stateParams, $http, $state
 		$scope.authData = null
 		$scope.user = null
 	}
-	
-	/***SEARCH***/	
-	
+
 	//Search For Reviews By Movie
 	
 	var moviesUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/search.json?query=';
@@ -191,26 +192,14 @@ myApp.controller('HomeController', function ($scope, $stateParams, $http, $state
 		var moviesUrlComplete = moviesUrlFirst + stringBuilder + moviesUrlLast;
 
 		$http.get(moviesUrlComplete).success(function (response) {
+			//Set results scope
 			$scope.searchResults = response.results
 		})
 	}
-
-	/***MOVIE / REVIEWER SELECTION***/
 	
 	//Select A Movie
 	$scope.selectMovie = function (movieName, movieReviewer, movieID) {
-		$scope.currentMovieName = movieName;
-		$scope.currentMovieReviewer = movieReviewer;
-		$scope.currentMovieID = movieID;
-		
-		//Check if new movie
-		
-		
-		//If new movie, make new movie object
-		
-		
-		//Set scope movie info
-		
+		hubService.setCurrentMovie(movieName, movieReviewer, movieID);
 
 		$state.go('movie');
 	}
@@ -218,67 +207,20 @@ myApp.controller('HomeController', function ($scope, $stateParams, $http, $state
 	//Select A Reviewer
 	$scope.selectReviewer = function (reviewer) {
 		hubService.setCurrentReviewer(reviewer);
-		
-		/*
-		
-		$scope.currentReviewer = reviewer;
-		
-		console.log($scope.currentReviewer);
-
-		var reviewersUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/reviewer/';
-		var reviewersUrlLast = '.json?critics-pick=Y&api-key=' + apiKey;
-		var search;
-			
-		//Get Reviewer Movies
-		if (($scope.currentReviewer).indexOf('. ') > -1) {
-			search = ($scope.searchKeywords).split('. ');
-		}
-		else {
-			search = ($scope.searchKeywords).split(' ');
-		}
-
-		var stringBuilder = "";
-
-		var s;
-		for (s in search) {
-			stringBuilder += search[s];
-			stringBuilder += "-";
-		}
-
-		var reviewersUrlComplete = reviewersUrlFirst + stringBuilder + reviewersUrlLast;
-
-		//Set scope reviewer movies 
-		$http.get(reviewersUrlComplete).success(function (response) {
-			$scope.currentReviewerMovies = response.results;
-			
-			console.log("Got Reviewer Movies");
-		})
-		
-		//Get Reviewer Details
-				
-		var reviewerUrlFirst = 'http://api.nytimes.com/svc/movies/v2/critics/';
-		var reviewerUrlLast = '.json?api-key=' + apiKey;
-		var reviwerUrlComplete = reviewerUrlFirst + stringBuilder + reviewerUrlLast;
-		
-		//Set scope reviewer details
-		$http.get(reviwerUrlComplete).success(function(response) {
-			$scope.currentReviewerDetails = response.results[0]
-		})
-
-		*/
 
 		$state.go('critic');
 	}
-	
-	/***ADD A FAVORITE***/
-
-	$scope.addFavorite = function () {
-
-	}
 });
 
+//CRITIC CONTROLLER
 myApp.controller('CriticController', function ($scope, $stateParams, $http, $state, Auth, $firebaseArray, $firebaseObject, hubService) {
 	$scope.currentReviewer = hubService.getCurrentReviewer();
+
+	if ($scope.currentReviewer == null) {
+		alert("Please Search For A Critic");
+
+		$state.go('index');
+	}
 
 	var reviewersUrlFirst = 'http://api.nytimes.com/svc/movies/v2/reviews/reviewer/';
 	var reviewersUrlLast = '.json?critics-pick=Y&api-key=' + apiKey;
@@ -299,13 +241,13 @@ myApp.controller('CriticController', function ($scope, $stateParams, $http, $sta
 		stringBuilder += search[i];
 		stringBuilder += "-";
 	}
-	
+
 	stringBuilder += search[search.length - 1];
-	
+
 	var reviewersUrlComplete = reviewersUrlFirst + stringBuilder + reviewersUrlLast;
 
-	//Set scope reviewer movies 
 	$http.get(reviewersUrlComplete).success(function (response) {
+		//Set scope reviewer movies 
 		$scope.currentReviewerMovies = response.results;
 	})
 		
@@ -314,9 +256,55 @@ myApp.controller('CriticController', function ($scope, $stateParams, $http, $sta
 	var reviewerUrlFirst = 'http://api.nytimes.com/svc/movies/v2/critics/';
 	var reviewerUrlLast = '.json?api-key=' + apiKey;
 	var reviwerUrlComplete = reviewerUrlFirst + stringBuilder + reviewerUrlLast;
-		
-	//Set scope reviewer details
+
 	$http.get(reviwerUrlComplete).success(function (response) {
+		//Set scope reviewer details
 		$scope.currentReviewerDetails = response.results[0]
 	})
+});
+
+//MOVIE CONTROLLER
+myApp.controller('MovieController', function ($scope, $stateParams, $http, $state, Auth, $firebaseArray, $firebaseObject, hubService) {
+	var ref = new Firebase('https://moviehub.firebaseio.com/');
+
+	var moviesRef = ref.child("movies");
+
+	$scope.currentMovieName = hubService.getCurrentMovie();
+	$scope.currentMovieReviewer = hubService.getCurrentMovieReviewer();
+	$scope.currentMovieID = hubService.getCurrentMovieID();
+
+	if ($scope.currentMovieName == null) {
+		alert('Please Search For A Movie');
+
+		$state.go('index');
+	}
+		
+	//Check if new movie, if new movie, make new movie object
+	$scope.movies = $firebaseObject(moviesRef);
+
+	if ($scope.movies[$scope.currentMovieID] != null) {
+
+	}
+	else {
+
+	}
+
+	//Set scope movie info
+
+	
+	//Add Movie Favorite
+	$scope.addFavorite = function () {
+
+	}
+});
+
+//FAVORITES CONTROLLER
+myApp.controller('FavoritesController', function ($scope, $stateParams, $http, $state, Auth, $firebaseArray, $firebaseObject, hubService) {
+	var ref = new Firebase('https://moviehub.firebaseio.com/');
+
+	var usersRef = ref.child("users");
+
+    $scope.users = $firebaseObject(usersRef);
+
+
 });

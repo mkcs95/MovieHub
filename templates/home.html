@@ -40,7 +40,7 @@
 			<tbody ng-repeat="result in searchResults">
 				<tr>
 					<td></td>
-					<td>{{result.display_title}}</td>
+					<td ng-click="selectMovie(result.display_title, result.byline, result.nyt_movie_id)">{{result.display_title}}</td>
 					<td><a ng-click="selectReviewer(result.byline)">{{result.byline}}</a></td>
 					<td>"{{result.headline}}"</td>
 				</tr>

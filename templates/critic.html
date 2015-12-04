@@ -10,6 +10,17 @@
 	<section id="criticInfoSection" class="jumbotron container">
 		<img />
 
+		<h2>Bio</h2>
+		<p>{{currentReviewerDetails.bio}}</p>
+
+		<div ng-repeat="review in currentReviewerMovies">
+			<div class="row">
+				<h3>"{{review.headline}}"</h3>
+			</div>
+		</div>
+
+		<!--
+
 		<div class="row">
 			<div class="col-xs-12 col-md-8">
 				<h2>Bio</h2>
@@ -24,7 +35,8 @@
 				</div>
 			</div>
 		</div>
+		
+		-->
 
 	</section>
-
 </div>
